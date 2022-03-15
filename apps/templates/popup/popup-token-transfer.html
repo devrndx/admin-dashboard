@@ -1,0 +1,101 @@
+{% extends "layouts/base-fullscreen.html" %} {% block title %} Token Transfer {%
+endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<div class="row">
+  <div class="card border-0 shadow components-section">
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="mb-4">
+          <label for="tokenValidate">토큰 배분 지갑 개인키</label>
+          <input type="text" class="form-control" id="tokenValidate" required />
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="mb-3">
+          <label for="targetAddr">대상 지갑 주소</label>
+          <input
+            type="text"
+            id="targetAddr"
+            class="form-control"
+            placeholder="{{addr}}"
+            disabled
+          />
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="mb-4">
+          <label for="amountValidate">수량</label>
+          <input
+            type="text"
+            class="form-control"
+            id="amountValidate"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="my-4">
+          <label for="textarea">결과</label>
+          <textarea
+            class="form-control"
+            placeholder=""
+            id="textarea"
+            rows="10"
+            disabled
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="mb-4">
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="transferToken(document.getElementById('tokenValidate').value, '{{addr}}', document.getElementById('amountValidate').value)"
+          >
+            보내기
+          </button>
+        </div>
+        <div class="col-sm-4 mb-3">
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="window.close()"
+          >
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script>
+  function transferToken(fromAddr, toAddr, amount) {
+    if (fromAddr === "") {
+      alert("주소를 입력하세요.");
+      return;
+    }
+
+    if (amount <= 0) {
+      alert("올바른 갯수를 입력하세요.");
+      return;
+    }
+
+    let res = axios.post("https://app.rndx-wallet.io/wallet/transfer", {
+      pk: fromAddr,
+      toAddr: toAddr,
+      amount: parseInt(amount),
+    });
+  }
+</script>
+{% endblock javascripts %}

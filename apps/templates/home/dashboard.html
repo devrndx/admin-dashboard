@@ -1,0 +1,89 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+    <div class="row mb-4">
+        <div class="align-content-end">
+            <!--button class="btn btn-sm btn-primary" type="button" onclick="showTokenTransferAllPopup()">일괄 보내기</button>
+            <button class="btn btn-sm btn-primary" type="button" onclick="showTokenApproveAllPopup()">일괄 승인하기</button>
+            <button class="btn btn-sm btn-primary" type="button" onclick="showTokenRevertAllPopup()">일괄 회수하기</button>
+            <button class="btn btn-sm btn-primary" type="button" onclick="showLockWalletAll()">지갑 일괄 잠금</button-->
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="card border-0 shadow mb-4">
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-centered table-nowrap mb-0 rounded">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="border-0 rounded-start">#</th>
+                                <th class="border-0">Name</th>
+                                <th class="border-0">Phone Number</th>
+                                <th class="border-0">Email</th>
+                                <th class="border-0">Wallet</th>
+                                <th class="border-0">Balance</th>
+                                <th class="border-0">Limitation</th>
+                                <th class="border-0 rounded-end">Send Token</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Item -->
+                            {% for n in client %}
+                            <tr>
+                                <td>{{n.id}}</a> </td>
+                                <td>{{n.name}}</td>
+                                <td>{{n.phonenumer}}</td>
+                                <td>{{n.email}}</td>
+                                <td>{{n.wallet_address}}</td>
+                                <td>{{n.balance}}</td>
+                                <td>{{n.withdraw_limit}}</td>
+                                <td><button class="btn btn-sm btn-primary" type="button" onclick="showTokenTransferPopup('{{n.wallet_address}}')">Send</button></td>
+                            </tr>
+                            {% endfor%}
+                            <!-- End of Item -->
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+    function showTokenTransferPopup(wallet){
+        window.open("/popupTokenTransfer?walletAddr=" + wallet,"토큰 전송","width=600, height=600, top=10, left=10");
+    }
+
+    function showTokenTransferAllPopup(wallet){
+        window.open("/popupTokenTransferAll", "토큰 일괄전송", "width=1200, height=700, top=10, left=10");
+    }
+
+    function showTokenApproveAllPopup(wallet){
+        window.open("/popupTokenApproveAll", "토큰 일괄승인", "width=1200, height=700, top=10, left=10");
+    }
+
+    function showTokenRevertAllPopup(wallet){
+        window.open("/popupTokenRevertAll", "토큰 일괄회수", "width=1200, height=700, top=10, left=10");
+    }
+
+    function showLockWalletAll(wallet){
+        window.open("/popupLockWalletAll", "지갑 일괄 잠금", "width=1200, height=700, top=10, left=10");
+    }
+    
+</script>
+{% endblock javascripts %}
