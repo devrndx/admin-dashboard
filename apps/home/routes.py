@@ -93,7 +93,7 @@ def get_segment(request):
         return None
 
 def load_client():
-    res = requests.get('https://app.rndx-wallet.io/users')
+    res = requests.get('https://app.rndx-wallet.io/users/getuser')
 
     users = [];
 
