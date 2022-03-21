@@ -43,8 +43,10 @@ endblock %}
           <button
             class="btn btn-primary"
             type="button"
+            onclick="transferToken(document.getElementById('tokenValidate').value, document.getElementById('formFile'))" 
           >
             보내기
+            
           </button>
         </div>
         <div class="col-sm-4 mb-3">
@@ -78,8 +80,12 @@ endblock %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
 <script>
-  var socket = io.connect("https://app.rndx-wallet.io", {
-    path: "/wallet/socket.io",
+  // var API_BASE_URL = "http://localhost:343127"
+  var API_BASE_URL = "https://app.srt-wallet.io"
+
+//  var socket = io.connect("https://app.rndx-wallet.io", {
+  var socket = io.connect(API_BASE_URL, {
+      path: "/wallet/socket.io",
     transports: ["websocket"],
   });
   socket.on("TxStateChanged", function (data) {
@@ -109,7 +115,7 @@ endblock %}
         console.log("======================================");
         await axios
           .post(
-            "https://app.rndx-wallet.io/wallet/transferAdmin",
+            API_BASE_URL + "/wallet/transferAdmin",
             {
               pk: pkVal,
               toAddr: addr,
@@ -136,7 +142,7 @@ endblock %}
         console.log("======================================");
         await axios
           .post(
-            "https://app.rndx-wallet.io/wallet/transferAdmin",
+            API_BASE_URL + "/wallet/transferAdmin",
             {
               pk: pkVal,
               toAddr: addr,
@@ -257,7 +263,7 @@ endblock %}
         setTimeout(async function () {
           let res = await axios
             .post(
-              "https://app.rndx-wallet.io/wallet/transferAdmin",
+              API_BASE_URL + "/wallet/transferAdmin",
               {
                 pk: sendParam["pk"],
                 toAddr: sendParam["toAddr"],
