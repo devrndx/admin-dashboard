@@ -32,11 +32,12 @@ jobs:
         images: |
           devrndx/ms-rndx-admin
         flavor: |
-          latest=true
+          latest=false
           prefix=nightly_
         tags: |
           type=ref,event=branch
           type=ref,event=pr
+          type=sha
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
