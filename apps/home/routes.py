@@ -64,8 +64,8 @@ def popupTokenTransfer():
 
 @blueprint.route('/popupTokenTransferAll')
 def popupTokenTransferAll():
-    isDebug = config('DEBUG', default='True')
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug == 'True' else 'https://app.rndx-wallet.io'
+    isDebug = config('DEBUG', default=True, cast=bool)
+    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
     return render_template("popup/popup-token-transferall.html", segment=popupTokenTransferAll,  api_base_url=API_BASE_URL)
 
 @blueprint.route('/popupTokenRevertAll')
@@ -78,7 +78,6 @@ def popupLockWalletAll():
 
 @blueprint.route('/popupTokenApproveAll')
 def popupTokenApproveAll():
-
     return render_template("popup/popup-token-approveAll.html", segment=popupTokenApproveAll)
 
 # Helper - Extract current page name from request
@@ -97,8 +96,8 @@ def get_segment(request):
         return None
 
 def load_client():
-    isDebug = config('DEBUG', default='True')
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug == 'True' else 'https://app.rndx-wallet.io'
+    isDebug = config('DEBUG', default=True, cast=bool)
+    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
     
     print ("API Url : " + API_BASE_URL + '/user/getuser')
     
