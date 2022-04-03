@@ -135,7 +135,7 @@
 
       if (status === 'Done') {
         await axios.get(API_BASE_URL + "/users/updatebalance",
-            { params : { toAddr: addr }
+            { params : { addr: addr }
           })
           .catch((error) => {
             console.log(error);
