@@ -61,15 +61,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
         <script>
-   var API_BASE_URL = process.env.NODE_DEV == 'production' ? 
-   "https://app.rndx-wallet.io" :
-   "https://app.dev.rndx-wallet.io" ;
-
+  var API_BASE_URL = "{{api_base_url}}";
   var socket = io.connect(API_BASE_URL, {
       path: "/wallet/socket.io",
     transports: ["websocket"],
   });
-  socket.on("TxStateChanged", function (data) {
+  socket.on("TxStateChanged", async function (data) {
     console.log(data);
 
     let addr = data.split(":")[2];

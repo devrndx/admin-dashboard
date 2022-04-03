@@ -15,7 +15,7 @@ class Client(object):
     def __init__(self):        
         self.id = 0
         self.name = ""
-        self.phonenumer = ""
+        self.phonenum = ""
         self.email = ""
         self.wallet_address = ""
         self.balance = 0
@@ -64,7 +64,9 @@ def popupTokenTransfer():
 
 @blueprint.route('/popupTokenTransferAll')
 def popupTokenTransferAll():
-    return render_template("popup/popup-token-transferall.html", segment=popupTokenTransferAll)
+    isDebug = config('DEBUG', default='True')
+    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug == 'True' else 'https://app.rndx-wallet.io'
+    return render_template("popup/popup-token-transferall.html", segment=popupTokenTransferAll,  api_base_url=API_BASE_URL)
 
 @blueprint.route('/popupTokenRevertAll')
 def popupTokenRevertAll():
@@ -76,6 +78,7 @@ def popupLockWalletAll():
 
 @blueprint.route('/popupTokenApproveAll')
 def popupTokenApproveAll():
+
     return render_template("popup/popup-token-approveAll.html", segment=popupTokenApproveAll)
 
 # Helper - Extract current page name from request
@@ -106,7 +109,7 @@ def load_client():
         user = Client();
         user.id = item["id"]
         user.name = item["name"]
-        user.phonenumer = item["phonenumer"]
+        user.phonenum = item["phonenum"]
         user.email = item["email"]
         user.wallet_address = item["wallet_address"]
         user.balance = item["balance"]
