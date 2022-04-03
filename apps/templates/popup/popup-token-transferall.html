@@ -1,89 +1,70 @@
-{% extends "layouts/base-fullscreen.html" %} {% block title %} Token Transfer {%
-endblock %}
-
-<!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %} {% block content %}
-<div class="row">
-  <div class="card border-0 shadow components-section">
-    <div class="card-body">
-      <div class="row mb-4">
-        <div class="mb-4">
-          <label for="tokenValidate">토큰 배분 지갑 개인키</label>
-          <input type="text" class="form-control" id="tokenValidate" required />
+{% extends "layouts/base-fullscreen.html" %}
+{% block title %}
+    Token Transfer {%
+    endblock %}
+    <!-- Specific Page CSS goes HERE  -->
+    {% block stylesheets %}
+    {% endblock stylesheets %}
+    {% block content %}
+        <div class="row">
+            <div class="card border-0 shadow components-section">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="mb-4">
+                            <label for="tokenValidate">토큰 배분 지갑 개인키</label>
+                            <input type="text" class="form-control" id="tokenValidate" required />
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">일괄전송목록</label>
+                            <input class="form-control" type="file" id="formFile" />
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 rounded"
+                               id="sendStateTable">
+                            <tr>
+                                <th class="border-0 rounded-start">#</th>
+                                <th class="border-0">Name</th>
+                                <th class="border-0">Phone Number</th>
+                                <th class="border-0">TxHash</th>
+                                <th class="border-0"># of Token</th>
+                                <th class="border-0 rounded-end">Status</th>
+                            </tr>
+                            <tbody>
+                                <!-- Item -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary"
+                                    type="button"
+                                    onclick="transferToken(document.getElementById('tokenValidate').value, document.getElementById('formFile'))">
+                                보내기
+                            </button>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary" type="button" onclick="window.close()">닫기</button>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary" type="button" onclick="exportResult()">결과 내보내기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    {% endblock content %}
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+        <script>
+   var API_BASE_URL = process.env.NODE_DEV == 'production' ? 
+   "https://app.rndx-wallet.io" :
+   "https://app.dev.rndx-wallet.io" ;
 
-      <div class="row mb-4">
-        <div class="mb-3">
-          <label for="formFile" class="form-label">일괄전송목록</label>
-          <input class="form-control" type="file" id="formFile" />
-        </div>
-      </div>
-      <div class="table-responsive">
-        <table
-          class="table table-centered table-nowrap mb-0 rounded"
-          id="sendStateTable"
-        >
-          <tr>
-            <th class="border-0 rounded-start">#</th>
-            <th class="border-0">Name</th>
-            <th class="border-0">Phone Number</th>
-            <th class="border-0">TxHash</th>
-            <th class="border-0"># of Token</th>
-            <th class="border-0 rounded-end">Status</th>
-          </tr>
-          <tbody>
-            <!-- Item -->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="row mb-4">
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="transferToken(document.getElementById('tokenValidate').value, document.getElementById('formFile'))" 
-          >
-            보내기
-            
-          </button>
-        </div>
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="window.close()"
-          >
-            닫기
-          </button>
-        </div>
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="exportResult()"
-          >
-            결과 내보내기
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endblock content %}
-
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-
-<script>
-  // var API_BASE_URL = "http://localhost:343127"
-  var API_BASE_URL = "https://app.rndx-wallet.io"
-
-//  var socket = io.connect("https://app.rndx-wallet.io", {
   var socket = io.connect(API_BASE_URL, {
       path: "/wallet/socket.io",
     transports: ["websocket"],
@@ -105,34 +86,31 @@ endblock %}
       cells[3].innerText = txHash;
       cells[5].innerText = status;
 
-      setTimeout(async function () {
-        console.log("======================================");
-        console.log("Reverted");
-        console.log("toAddr :" + addr);
-        console.log("amount :" + cells[4].innerText);
-        console.log("nameVal :" + cells[1].innerText);
-        console.log("phoneNumVal :" + cells[2].innerText);
-        console.log("======================================");
-        await axios
-          .post(
-            API_BASE_URL + "/wallet/transferAdmin",
-            {
-              pk: pkVal,
-              toAddr: addr,
-              amount: cells[4].innerText,
-              name: cells[1].innerText,
-              phoneNum: cells[2].innerText,
-            }
-          )
-          .catch((error) => {
-            console.log(error);
-          });
-      }, 30000);
+      console.log("======================================");
+      console.log("Reverted");
+      console.log("toAddr :" + addr);
+      console.log("amount :" + cells[4].innerText);
+      console.log("nameVal :" + cells[1].innerText);
+      console.log("phoneNumVal :" + cells[2].innerText);
+      console.log("======================================");
+      await axios
+        .post(
+          API_BASE_URL + "/wallet/transferAdmin",
+          {
+            pk: pkVal,
+            toAddr: addr,
+            amount: cells[4].innerText,
+            name: cells[1].innerText,
+            phoneNum: cells[2].innerText,
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+        });
     } else if (res === "2") {
       const pkVal = document.getElementById("tokenValidate").value;
       cells[3].innerText = txHash;
       cells[5].innerText = status;
-      setTimeout(async function () {
         console.log("======================================");
         console.log("Retry");
         console.log("toAddr :" + addr);
@@ -154,10 +132,18 @@ endblock %}
           .catch((error) => {
             console.log(error);
           });
-      }, 30000);
     } else {
       cells[3].innerText = txHash;
       cells[5].innerText = status;
+
+      if (status === 'Done') {
+        await axios.get(API_BASE_URL + "/users/updatebalance",
+            { params : { toAddr: addr }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   });
 
@@ -178,7 +164,7 @@ endblock %}
 
       let res = await axios
         .get(
-          "https://app.rndx-wallet.io/wallet/balanceof",
+          API_BASE_URL + "/wallet/balanceof",
           {
             params: {
               addr: tableEl.rows[itemIdx].id,
@@ -195,7 +181,7 @@ endblock %}
         tableEl.rows[itemIdx].cells[2].innerText,
         tableEl.rows[itemIdx].id,
         tableEl.rows[itemIdx].cells[4].innerText,
-        res.data.balance.replace("000000000000000000", "")
+        res.data.balance
       );
 
       csv.push(dataRow.join(","));
@@ -299,5 +285,5 @@ endblock %}
 
     reader.readAsText(csvFile.files[0], "euc-kr");
   }
-</script>
-{% endblock javascripts %}
+        </script>
+    {% endblock javascripts %}

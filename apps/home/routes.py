@@ -8,6 +8,7 @@ from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required
 from jinja2 import TemplateNotFound
+from decouple import config
 import requests
 
 class Client(object):
@@ -93,8 +94,12 @@ def get_segment(request):
         return None
 
 def load_client():
-    res = requests.get('https://app.rndx-wallet.io/users/getuser')
-
+    isDebug = config('DEBUG', default='True')
+    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug == 'True' else 'https://app.rndx-wallet.io'
+    
+    print ("API Url : " + API_BASE_URL + '/user/getuser')
+    
+    res = requests.get(API_BASE_URL + '/users/getuser')
     users = [];
 
     for item in res.json()['users']:
