@@ -107,6 +107,8 @@ def load_client():
 
     for item in res.json()['users']:
         user = Client();
+        
+        print (item)
         user.id = item["id"]
         user.name = item["name"]
         user.phonenum = item["phonenum"]
