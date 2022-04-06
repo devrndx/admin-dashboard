@@ -251,9 +251,13 @@
           sendParam["toAddr"].substring(0, 2) != "0x" ||
           sendParam["toAddr"].length != 42
         ) {
-            genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");
-
-          continue;
+            const tableEl = document.getElementById("sendStateTable");
+            const rowIdx = tableEl.rows.length;
+            if (rowIdx !== rowContent.length) {
+                genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");
+            }
+            
+            continue;
         }
 
         setTimeout(async function () {
