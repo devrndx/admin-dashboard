@@ -248,7 +248,7 @@
           sendParam["name"] === "" ||
           sendParam["phoneNum"] === "" ||
           sendParam["toAddr"] === "" ||
-          sendParam["toAddr"].substring(0, 2) != "0x"
+          sendParam["toAddr"].substring(0, 2) != "0x" ||
           sendParam["toAddr"].length != 42
         ) {
             genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");

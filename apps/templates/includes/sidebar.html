@@ -50,29 +50,7 @@
                   <span class="sidebar-text">Settings</span>
                 </a>
               </li>
-              <li class="nav-item active">
-                <span class="sidebar-text">Gas Price : </span>
-                <span class="sidebar-text" id="gas-price">V</span>
-              </li>
+
             </ul>
           </div>
         </nav>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-
-        <script>
-          setInterval(() => {
-            const response = axios.get('https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=9SIZV9A731G8CTGWX8TIR158B8FHQB473U')
-            .then((response) => {
-              return parseFloat(response.data.result["suggestBaseFee"]);
-            })
-            .then((basePrice) => {
-              const response = axios.get('https://api.etherscan.io/api?module=stats&action=ethprice&apikey=9SIZV9A731G8CTGWX8TIR158B8FHQB473U')
-              .then((response) => {
-                let gasPrice = parseFloat(response.data.result["ethusd"]) * basePrice * 0.000000001 * 65000;              
-                document.getElementById("gas-price").textContent= "$ " + gasPrice.toFixed(2);
-              })
-
-            });
-          }, 1000)
-        </script>
