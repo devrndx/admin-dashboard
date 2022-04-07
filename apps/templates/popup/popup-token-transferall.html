@@ -129,6 +129,16 @@
           .catch((error) => {
             console.log(error);
           });
+    } else if (res === "3") {
+        console.log("======================================");
+        console.log("Dont Exist wallet");
+        console.log("toAddr :" + addr);
+        console.log("amount :" + cells[4].innerText);
+        console.log("nameVal :" + cells[1].innerText);
+        console.log("phoneNumVal :" + cells[2].innerText);
+        console.log("======================================");
+        
+        cells[5].innerText = "지갑없음";
     } else {
       cells[3].innerText = txHash;
       cells[5].innerText = status;
@@ -238,10 +248,19 @@
           sendParam["name"] === "" ||
           sendParam["phoneNum"] === "" ||
           sendParam["toAddr"] === "" ||
-          sendParam["toAddr"].substring(0, 2) != "0x"
+          sendParam["toAddr"].substring(0, 2) != "0x" ||
+          sendParam["toAddr"].length != 42
         ) {
-          continue;
+            const tableEl = document.getElementById("sendStateTable");
+            const rowIdx = tableEl.rows.length;
+            if (count  !== (rowContent.length - 1)) {
+                genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");
+            }
+
+            continue;
         }
+        
+        genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "Created");
 
         setTimeout(async function () {
           let res = await axios
@@ -259,28 +278,31 @@
               console.log(error);
             });
 
-          let tableEl = document.getElementById("sendStateTable");
-          let rowIdx = tableEl.rows.length;
-          let tr = tableEl.insertRow(rowIdx);
-          tr.id = sendParam["toAddr"];
-
-          let tdGen = (tr, value) => {
-            let tdEl = tr.insertCell(-1);
-            tdEl.innerText = value;
-            return;
-          };
-
-          tdGen(tr, rowIdx);
-          tdGen(tr, sendParam["name"]);
-          tdGen(tr, sendParam["phoneNum"]);
-          tdGen(tr, "-");
-          tdGen(tr, sendParam["amount"]);
-          tdGen(tr, "Created");
         }, 15000 * count);
       }
     });
 
     reader.readAsText(csvFile.files[0], "euc-kr");
+  }
+
+  function genInfoRow(name, phoneNum, addr, txHash, amt, status) {
+    let tableEl = document.getElementById("sendStateTable");
+    let rowIdx = tableEl.rows.length;
+    let tr = tableEl.insertRow(rowIdx);
+    tr.id = addr;
+
+    let tdGen = (tr, value) => {
+      let tdEl = tr.insertCell(-1);
+      tdEl.innerText = value;
+      return;
+    };
+
+    tdGen(tr, rowIdx);
+    tdGen(tr, name);
+    tdGen(tr, phoneNum);
+    tdGen(tr, txHash);
+    tdGen(tr, amt);
+    tdGen(tr, status);
   }
         </script>
     {% endblock javascripts %}
