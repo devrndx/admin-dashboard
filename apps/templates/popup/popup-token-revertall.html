@@ -110,7 +110,7 @@
       cells[5].innerText = status;
         console.log("======================================");
         console.log("Retry");
-        console.log("toAddr :" + addr);
+        console.log("fromAddr :" + addr);
         console.log("amount :" + cells[4].innerText);
         console.log("nameVal :" + cells[1].innerText);
         console.log("phoneNumVal :" + cells[2].innerText);
@@ -132,7 +132,7 @@
     } else if (res === "3") {
         console.log("======================================");
         console.log("Dont Exist wallet");
-        console.log("toAddr :" + addr);
+        console.log("fromAddr :" + addr);
         console.log("amount :" + cells[4].innerText);
         console.log("nameVal :" + cells[1].innerText);
         console.log("phoneNumVal :" + cells[2].innerText);
@@ -235,7 +235,7 @@
 
         let sendParam = {
           pk: fromAddr,
-          toAddr: typeof rowContent[2] === "string" ? rowContent[2].trim() : "",
+          fromAddr: typeof rowContent[2] === "string" ? rowContent[2].trim() : "",
           name: typeof rowContent[0] === "string" ? rowContent[0].trim() : "",
           phoneNum:
             typeof rowContent[1] === "string"
@@ -247,20 +247,20 @@
         if (
           sendParam["name"] === "" ||
           sendParam["phoneNum"] === "" ||
-          sendParam["toAddr"] === "" ||
-          sendParam["toAddr"].substring(0, 2) != "0x" ||
-          sendParam["toAddr"].length != 42
+          sendParam["fromAddr"] === "" ||
+          sendParam["fromAddr"].substring(0, 2) != "0x" ||
+          sendParam["fromAddr"].length != 42
         ) {
             const tableEl = document.getElementById("sendStateTable");
             const rowIdx = tableEl.rows.length;
             if (count  !== (rowContent.length - 1)) {
-                genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");
+                genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["fromAddr"], "-", sendParam["amount"], "유저정보오류");
             }
 
             continue;
         }
         
-        genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "Created");
+        genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["fromAddr"], "-", sendParam["amount"], "Created");
 
         setTimeout(async function () {
           let res = await axios
