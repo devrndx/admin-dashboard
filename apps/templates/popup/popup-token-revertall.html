@@ -1,89 +1,72 @@
-{% extends "layouts/base-fullscreen.html" %} {% block title %} Token Transfer {%
-endblock %}
-
-<!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %} {% block content %}
-<div class="row">
-  <div class="card border-0 shadow components-section">
-    <div class="card-body">
-      <div class="row mb-4">
-        <div class="mb-4">
-          <label for="tokenValidate">토큰 배분 지갑 개인키</label>
-          <input type="text" class="form-control" id="tokenValidate" required />
+{% extends "layouts/base-fullscreen.html" %}
+{% block title %}
+    Token Transfer {%
+    endblock %}
+    <!-- Specific Page CSS goes HERE  -->
+    {% block stylesheets %}
+    {% endblock stylesheets %}
+    {% block content %}
+        <div class="row">
+            <div class="card border-0 shadow components-section">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="mb-4">
+                            <label for="tokenValidate">토큰 배분 지갑 개인키</label>
+                            <input type="text" class="form-control" id="tokenValidate" required />
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">일괄전송목록</label>
+                            <input class="form-control" type="file" id="formFile" />
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 rounded"
+                               id="sendStateTable">
+                            <tr>
+                                <th class="border-0 rounded-start">#</th>
+                                <th class="border-0">Name</th>
+                                <th class="border-0">Phone Number</th>
+                                <th class="border-0">TxHash</th>
+                                <th class="border-0"># of Token</th>
+                                <th class="border-0 rounded-end">Status</th>
+                            </tr>
+                            <tbody>
+                                <!-- Item -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary"
+                                    type="button"
+                                    onclick="transferToken(document.getElementById('tokenValidate').value, document.getElementById('formFile'))">
+                                보내기
+                            </button>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary" type="button" onclick="window.close()">닫기</button>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <button class="btn btn-primary" type="button" onclick="exportResult()">결과 내보내기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div class="row mb-4">
-        <div class="mb-3">
-          <label for="formFile" class="form-label">일괄전송목록</label>
-          <input class="form-control" type="file" id="formFile" />
-        </div>
-      </div>
-      <div class="table-responsive">
-        <table
-          class="table table-centered table-nowrap mb-0 rounded"
-          id="sendStateTable"
-        >
-          <tr>
-            <th class="border-0 rounded-start">#</th>
-            <th class="border-0">Name</th>
-            <th class="border-0">Phone Number</th>
-            <th class="border-0">TxHash</th>
-            <th class="border-0"># of Token</th>
-            <th class="border-0 rounded-end">Status</th>
-          </tr>
-          <tbody>
-            <!-- Item -->
-          </tbody>
-        </table>
-      </div>
-
-      <div class="row mb-4">
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="transferToken(document.getElementById('tokenValidate').value, document.getElementById('formFile'))"
-          >
-            보내기
-          </button>
-        </div>
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="window.close()"
-          >
-            닫기
-          </button>
-        </div>
-        <div class="col-sm-4 mb-3">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="exportResult()"
-          >
-            결과 내보내기
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endblock content %}
-
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-
-<script>
-  var socket = io.connect("https://app.rndx-wallet.io", {
-    path: "/wallet/socket.io",
+    {% endblock content %}
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+        <script>
+  var API_BASE_URL = "{{api_base_url}}";
+  var socket = io.connect(API_BASE_URL, {
+      path: "/wallet/socket.io",
     transports: ["websocket"],
   });
-  socket.on("TxStateChanged", function (data) {
+  socket.on("TxStateChanged", async function (data) {
     console.log(data);
 
     let addr = data.split(":")[2];
@@ -97,40 +80,34 @@ endblock %}
 
     if (res === "1") {
       const pkVal = document.getElementById("tokenValidate").value;
-      console.log(pkVal);
       cells[3].innerText = txHash;
       cells[5].innerText = status;
 
-      setTimeout(async function () {
-        console.log("======================================");
-        console.log("Reverted");
-        console.log("toAddr :" + addr);
-        console.log("amount :" + cells[4].innerText);
-        console.log("nameVal :" + cells[1].innerText);
-        console.log("phoneNumVal :" + cells[2].innerText);
-        console.log("======================================");
-        await axios
-          .post(
-            "https://app.rndx-wallet.io/wallet/transferFrom",
-            {
-              pk: pkVal,
-              fromAddr: "0x60846Cc8F6B882E48dD4b5A0b4a414E776539885",
-              toAddr: addr,
-              amount: cells[4].innerText,
-              name: cells[1].innerText,
-              phoneNum: cells[2].innerText,
-            }
-          )
-          .catch((error) => {
-            console.log(error);
-          });
-      }, 30000);
+      console.log("======================================");
+      console.log("Reverted");
+      console.log("fromAddr :" + addr);
+      console.log("amount :" + cells[4].innerText);
+      console.log("nameVal :" + cells[1].innerText);
+      console.log("phoneNumVal :" + cells[2].innerText);
+      console.log("======================================");
+      await axios
+        .post(
+          API_BASE_URL + "/users/revertToken",
+          {
+            pk: pkVal,
+            fromAddr: addr,
+            amount: cells[4].innerText,
+            name: cells[1].innerText,
+            phoneNum: cells[2].innerText,
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+        });
     } else if (res === "2") {
       const pkVal = document.getElementById("tokenValidate").value;
-      console.log(pkVal);
       cells[3].innerText = txHash;
       cells[5].innerText = status;
-      setTimeout(async function () {
         console.log("======================================");
         console.log("Retry");
         console.log("toAddr :" + addr);
@@ -140,11 +117,10 @@ endblock %}
         console.log("======================================");
         await axios
           .post(
-            "https://app.rndx-wallet.io/wallet/transferFrom",
+            API_BASE_URL + "/users/revertToken",
             {
               pk: pkVal,
-              fromAddr: "0x60846Cc8F6B882E48dD4b5A0b4a414E776539885",
-              toAddr: addr,
+              fromAddr: addr,
               amount: cells[4].innerText,
               name: cells[1].innerText,
               phoneNum: cells[2].innerText,
@@ -153,10 +129,28 @@ endblock %}
           .catch((error) => {
             console.log(error);
           });
-      }, 30000);
+    } else if (res === "3") {
+        console.log("======================================");
+        console.log("Dont Exist wallet");
+        console.log("toAddr :" + addr);
+        console.log("amount :" + cells[4].innerText);
+        console.log("nameVal :" + cells[1].innerText);
+        console.log("phoneNumVal :" + cells[2].innerText);
+        console.log("======================================");
+        
+        cells[5].innerText = "지갑없음";
     } else {
       cells[3].innerText = txHash;
       cells[5].innerText = status;
+
+      if (status === 'Done') {
+        await axios.get(API_BASE_URL + "/users/updatebalance",
+            { params : { addr: addr }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
   });
 
@@ -165,7 +159,7 @@ endblock %}
 
     let csv = [];
     let row = [];
-    row.push("이름", "전화번호", "지갑주소", "지급수량", "전체수량");
+    row.push("#", "이름", "전화번호", "지갑주소", "지급수량", "전체수량");
 
     csv.push(row.join(","));
 
@@ -177,7 +171,7 @@ endblock %}
 
       let res = await axios
         .get(
-          "https://app.rndx-wallet.io/wallet/balanceof",
+          API_BASE_URL + "/wallet/balanceof",
           {
             params: {
               addr: tableEl.rows[itemIdx].id,
@@ -191,9 +185,10 @@ endblock %}
       dataRow.push(
         tableEl.rows[itemIdx].cells[0].innerText,
         tableEl.rows[itemIdx].cells[1].innerText,
+        tableEl.rows[itemIdx].cells[2].innerText,
         tableEl.rows[itemIdx].id,
         tableEl.rows[itemIdx].cells[4].innerText,
-        res.data.balance.replace("000000000000000000", "")
+        res.data.balance
       );
 
       csv.push(dataRow.join(","));
@@ -204,9 +199,10 @@ endblock %}
 
     //한글 처리를 해주기 위해 BOM 추가하기
     const BOM = "\uFEFF";
-    csv = BOM + csv;
+    let context = csv.join("\n");
+    context = BOM + context;
 
-    csvFile = new Blob([csv], { type: "text/csv" });
+    csvFile = new Blob([context], { type: "text/csv" });
     downloadLink = document.createElement("a");
     downloadLink.download = "result_export.csv";
     downloadLink.href = window.URL.createObjectURL(csvFile);
@@ -246,26 +242,33 @@ endblock %}
               ? rowContent[1].trim().replaceAll("-", "")
               : "",
           amount: parseFloat(rowContent[3]),
-          fromAddr: "0x60846Cc8F6B882E48dD4b5A0b4a414E776539885",
         };
 
         if (
           sendParam["name"] === "" ||
           sendParam["phoneNum"] === "" ||
           sendParam["toAddr"] === "" ||
-          sendParam["toAddr"].substring(0, 2) != "0x"
+          sendParam["toAddr"].substring(0, 2) != "0x" ||
+          sendParam["toAddr"].length != 42
         ) {
-          continue;
+            const tableEl = document.getElementById("sendStateTable");
+            const rowIdx = tableEl.rows.length;
+            if (count  !== (rowContent.length - 1)) {
+                genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "유저정보오류");
+            }
+
+            continue;
         }
+        
+        genInfoRow(sendParam["name"], sendParam["phoneNum"], sendParam["toAddr"], "-", sendParam["amount"], "Created");
 
         setTimeout(async function () {
           let res = await axios
             .post(
-              "https://app.rndx-wallet.io/wallet/transferFrom",
+              API_BASE_URL + "/users/revertToken",
               {
                 pk: sendParam["pk"],
                 fromAddr: sendParam["fromAddr"],
-                toAddr: sendParam["toAddr"],
                 amount: sendParam["amount"],
                 name: sendParam["name"],
                 phoneNum: sendParam["phoneNum"],
@@ -275,28 +278,31 @@ endblock %}
               console.log(error);
             });
 
-          let tableEl = document.getElementById("sendStateTable");
-          let rowIdx = tableEl.rows.length;
-          let tr = tableEl.insertRow(rowIdx);
-          tr.id = sendParam["toAddr"];
-
-          let tdGen = (tr, value) => {
-            let tdEl = tr.insertCell(-1);
-            tdEl.innerText = value;
-            return;
-          };
-
-          tdGen(tr, rowIdx);
-          tdGen(tr, sendParam["name"]);
-          tdGen(tr, sendParam["phoneNum"]);
-          tdGen(tr, "-");
-          tdGen(tr, sendParam["amount"]);
-          tdGen(tr, "Created");
         }, 15000 * count);
       }
     });
 
     reader.readAsText(csvFile.files[0], "euc-kr");
   }
-</script>
-{% endblock javascripts %}
+
+  function genInfoRow(name, phoneNum, addr, txHash, amt, status) {
+    let tableEl = document.getElementById("sendStateTable");
+    let rowIdx = tableEl.rows.length;
+    let tr = tableEl.insertRow(rowIdx);
+    tr.id = addr;
+
+    let tdGen = (tr, value) => {
+      let tdEl = tr.insertCell(-1);
+      tdEl.innerText = value;
+      return;
+    };
+
+    tdGen(tr, rowIdx);
+    tdGen(tr, name);
+    tdGen(tr, phoneNum);
+    tdGen(tr, txHash);
+    tdGen(tr, amt);
+    tdGen(tr, status);
+  }
+        </script>
+    {% endblock javascripts %}

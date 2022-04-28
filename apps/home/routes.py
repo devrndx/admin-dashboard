@@ -70,7 +70,9 @@ def popupTokenTransferAll():
 
 @blueprint.route('/popupTokenRevertAll')
 def popupTokenRevertAll():
-    return render_template("popup/popup-token-revertall.html", segment=popupTokenRevertAll)
+    isDebug = config('DEBUG', default=True, cast=bool)
+    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
+    return render_template("popup/popup-token-revertall.html", segment=popupTokenRevertAll, api_base_url=API_BASE_URL)
 
 @blueprint.route('/popupLockWalletAll')
 def popupLockWalletAll():
