@@ -24,7 +24,7 @@
             <div class="card-body">
                 
                 <div class="table-responsive">
-                    <table class="table table-centered table-nowrap mb-0 rounded">
+                    <table class="table table-nowrap mb-0 rounded table-striped table-hover">
                         <thead class="thead-light">
                             <tr>
                                 <th class="border-0 rounded-start">#</th>
@@ -48,7 +48,7 @@
                                 <td>{{n.wallet_address}}</td>
                                 <td>{{n.balance}}</td>
                                 <td>{{n.withdraw_limit}}</td>
-                                <td><button class="btn btn-sm btn-primary" type="button" onclick="showTokenTransferPopup('{{n.wallet_address}}')">Send</button></td>
+                                <td><button class="btn btn-sm btn-primary" type="button" onclick="showTokenTransferPopup('{{n.wallet_address}}', '{{n.name}}', '{{n.phonenum}}')">Send</button></td>
                             </tr>
                             {% endfor%}
                             <!-- End of Item -->
@@ -66,8 +66,10 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
-    function showTokenTransferPopup(wallet){
-        window.open("/popupTokenTransfer?walletAddr=" + wallet,"토큰 전송","width=600, height=600, top=10, left=10");
+    function showTokenTransferPopup(walletaddr, name, phoneNum){
+        const query = `walletAddr=${walletaddr}&name=${name}&phoneNum=${phoneNum} `;
+
+        window.open("/popupTokenTransfer?" + query,"토큰 전송","width=600, height=600, top=10, left=10");
     }
 
     function showTokenTransferAllPopup(wallet){
