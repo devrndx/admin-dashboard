@@ -60,7 +60,7 @@ def ping():
 @blueprint.route('/popupTokenTransfer')
 def popupTokenTransfer():
     isDebug = config('DEBUG', default=True, cast=bool)
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
+    API_BASE_URL = 'https://app.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
     
     walletAddr = request.args.get('walletAddr')
     name = request.args.get('name')
@@ -70,13 +70,13 @@ def popupTokenTransfer():
 @blueprint.route('/popupTokenTransferAll')
 def popupTokenTransferAll():
     isDebug = config('DEBUG', default=True, cast=bool)
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug else 'https://app.rndx-wallet.io'
+    API_BASE_URL = 'https://app.rndx-wallet.io' if isDebug else 'https://app.rndx-wallet.io'
     return render_template("popup/popup-token-transferall.html", segment=popupTokenTransferAll,  api_base_url=API_BASE_URL)
 
 @blueprint.route('/popupTokenRevertAll')
 def popupTokenRevertAll():
     isDebug = config('DEBUG', default=True, cast=bool)
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
+    API_BASE_URL = 'https://app.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
     return render_template("popup/popup-token-revertall.html", segment=popupTokenRevertAll, api_base_url=API_BASE_URL)
 
 @blueprint.route('/popupLockWalletAll')
@@ -104,7 +104,7 @@ def get_segment(request):
 
 def load_client():
     isDebug = config('DEBUG', default=True, cast=bool)
-    API_BASE_URL = 'https://app.dev.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
+    API_BASE_URL = 'https://app.rndx-wallet.io' if isDebug  else 'https://app.rndx-wallet.io'
     
     print ("API Url : " + API_BASE_URL + '/user/getuser')
     
