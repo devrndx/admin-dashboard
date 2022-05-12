@@ -67,7 +67,7 @@
 {% block javascripts %}
 <script>
     function showTokenTransferPopup(walletaddr, name, phoneNum){
-        const query = `walletAddr=${walletaddr}&name=${name}&${phoneNum} `;
+        const query = `walletAddr=${walletaddr}&name=${name}&phoneNum=${phoneNum} `;
 
         window.open("/popupTokenTransfer?" + query,"토큰 전송","width=600, height=600, top=10, left=10");
     }
