@@ -55,7 +55,7 @@ endblock %}
           <button
             class="btn btn-primary"
             type="button"
-            onclick="transferToken(document.getElementById('tokenValidate').value, '{{addr}}', document.getElementById('amountValidate').value)"
+            onclick="transferToken(document.getElementById('tokenValidate').value, '{{addr}}', document.getElementById('amountValidate').value, '{{name}}', '{{phoneNum}}')"
           >
             보내기
           </button>
@@ -78,9 +78,11 @@ endblock %}
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+var API_BASE_URL = "{{api_base_url}}";
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script>
-  function transferToken(fromAddr, toAddr, amount) {
+  function transferToken(fromAddr, toAddr, amount, name, phoneNum) {
     if (fromAddr === "") {
       alert("주소를 입력하세요.");
       return;
@@ -91,10 +93,12 @@ endblock %}
       return;
     }
 
-    let res = axios.post("https://app.rndx-wallet.io/wallet/transfer", {
+    let res = axios.post(API_BASE_URL + "/wallet/transferAdmin", {
       pk: fromAddr,
       toAddr: toAddr,
       amount: parseInt(amount),
+      name: name,
+      phoneNum: phoneNum,
     });
   }
 </script>
