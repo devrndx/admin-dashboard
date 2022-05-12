@@ -63,15 +63,13 @@ endblock %}
           >
             보내기
           </button>
-        </div>
-        <div class="col-sm-4 mb-3">
           <button
-            class="btn btn-primary"
-            type="button"
-            onclick="window.close()"
-          >
-            닫기
-          </button>
+          class="btn btn-primary"
+          type="button"
+          onclick="window.close()"
+        >
+          닫기
+        </button>
         </div>
       </div>
     </div>
@@ -92,6 +90,7 @@ endblock %}
     path: "/wallet/socket.io",
   transports: ["websocket"],
   });
+
   socket.on("TxStateChanged", async function (data) {
     console.log(data);
     let addr = data.split(":")[2];
@@ -113,8 +112,8 @@ endblock %}
           console.log(error);
         });
     }
-  }
-  
+  });
+
   function transferToken(fromAddr, toAddr, amount, name, phoneNum) {
     if (fromAddr === "") {
       alert("주소를 입력하세요.");
